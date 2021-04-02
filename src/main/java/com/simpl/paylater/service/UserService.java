@@ -76,6 +76,11 @@ public class UserService {
 
     public ApiResponse createTxn(Txn txn){
         ApiResponse response = new ApiResponse();
+        if(txn.getUserEmail()== null || txn.getTxnAmount() == null || txn.getMerchantName() == null){
+            response.setMessage("Mandatory params are missing ....");
+            response.setSuccess(false);
+            return response;
+        }
         User user = userRepository.findByEmail(txn.getUserEmail());
         if(user == null){
             response.setMessage("User not  found");
@@ -121,7 +126,17 @@ public class UserService {
 
     public ApiResponse pay(Repayment repayment){
         ApiResponse response = new ApiResponse();
+        if(repayment.getUserEmail() == null || repayment.getAmount() == null){
+            response.setSuccess(false);
+            response.setMessage("Mandatory params missing...");
+            return response;
+        }
         User user = userRepository.findByEmail(repayment.getUserEmail());
+        if(repayment.getAmount().compareTo(user.getUsedLimit()) > 0){
+            response.setSuccess(false);
+            response.setMessage("Invalid repayment amount");
+            return response;
+        }
         if(user!=null){
             repayment.setUserId(user.getId());
             user.setUsedLimit(user.getUsedLimit().subtract(repayment.getAmount()));
