@@ -13,6 +13,7 @@ public class MerchantService {
     @Autowired
     MerchantRepository merchantRepository;
 
+    //Creation or updation of a merchant
     public ApiResponse createOrModifyMerchant(Merchant merchant){
         ApiResponse apiResponse = new ApiResponse();
         Merchant createdMerchant = null;
